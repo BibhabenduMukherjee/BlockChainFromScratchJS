@@ -1,3 +1,4 @@
+// Start up code 
 class Block {
     constructor(timestamp, lastHash , hash , data){
         this.hash = hash;
