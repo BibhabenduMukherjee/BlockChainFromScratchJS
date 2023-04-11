@@ -10,13 +10,15 @@ class Block {
         this.data = data;
     }
 
+    // static for all ref of same gen
     static genesis(){
-        
-           return new Block(GENESIS_DATA)
-        
+           return new Block(GENESIS_DATA) 
     }
 
-
+    // adding a new block to the existing
+    // chain should require to call 
+    // mineBlock() with the ref of previous block
+    // and data to injected
     static mineBlock({lastBlock , data}){
         const timestamp = Date.now()
         const lastHash = lastBlock.hash
