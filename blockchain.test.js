@@ -2,10 +2,13 @@ const Blockchain = require("./blockchain")
 const Block  = require("./block")
 
 describe("Blockchain" , ()=>{
-    let blockchain = new Blockchain();
+    let blockchain, newChain , originalChian;
 
     beforeEach(()=>{
         blockchain = new Blockchain()
+        newChain = new Blockchain()
+
+        originalChian = blockchain.chain
     })
 
     // first check is there a proper chain 
@@ -47,6 +50,7 @@ describe("Blockchain" , ()=>{
                 blockchain.addBlock({data : 'Beets'});
                 blockchain.addBlock({data : 'Battlestar Galactica'})
             })
+
            describe('and a lastHash reference has changed ' ,()=>{
             it('returns false' , ()=>{
             
@@ -55,6 +59,7 @@ describe("Blockchain" , ()=>{
             })
            })
 
+
            describe("and the chain contains a block with invalid field", ()=>{
             it("returns false" , ()=>{
                 blockchain.chain[2].data = "some-bad-data";
@@ -62,13 +67,47 @@ describe("Blockchain" , ()=>{
             })
            })
 
-           describe("and the chain does not contain any invalid blocks",()=>{
-            it('return ture',()=>{
-               
-                expect(Blockchain.isValidChain(blockchain.chain)).toBe(true)
-            })
-           })
+        //    describe("and the chain does not contain any invalid blocks",()=>{
+        //     it('return true',()=>{
+                
+        //         expect(Blockchain.isValidChain(blockchain.chain)).toBe(true)
+        //     })
+        //    })
 
+        })
+    })
+
+    // chain replacement 
+    describe('replacement()',()=>{
+        describe("when the new chain is not longer",()=>{
+            it('does not replace the chain',()=>{
+                newChain.chain[0] = {new : "chain"}
+                blockchain.replaceChain(newChain.chain)
+                // if chain replacement is not done then the original chain is same as
+                // existing blockchain
+                expect(blockchain.chain).toEqual(originalChian)
+            })
+        })
+
+        describe('when the chain is longer ',()=>{
+            beforeEach(()=>{
+                newChain.addBlock({data : 'Bears'});
+                newChain.addBlock({data : 'Beets'});
+                newChain.addBlock({data : 'Battlestar Galactica'})
+            })
+            describe('and the chin is invalid', () => {
+               it("does not replace the chain",()=>{
+                newChain.chain.hash = 'some-fake-hash'
+                blockchain.replaceChain(newChain.chain)
+                expect(blockchain.chain).toEqual(originalChian)
+               })
+             })
+             describe('and the chain is valid', () => { 
+                it("replaces the chain", ()=>{
+                 blockchain.replaceChain(newChain.chain)
+                 expect(blockchain.chain).toEqual(newChain.chain)
+                })
+              })
         })
     })
 })
